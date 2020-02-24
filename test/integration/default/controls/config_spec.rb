@@ -34,7 +34,7 @@ control 'TEMPLATE configuration' do
     its('content') { should include 'winner of the merge: pillar' }
     its('content') do
       should include(
-        '"map.jinja": {"sources": ["osarch", "os_family", "os", "osfinger", "roles", ' \
+        '"map_jinja": {"sources": ["osarch", "os_family", "os", "osfinger", "roles", ' \
         '"id", "any/path/can/be/used/here.yaml"]}'
       )
     end

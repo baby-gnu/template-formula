@@ -19,7 +19,7 @@ winner: defaults
 # `smart` strategy of `salt.slsutil.merge`.
 # Note: Any value not evaluated by `config.get` will be used literally.
 # This can be used to set custom paths, as many levels deep as required.
-map.jinja:
+map_jinja:
   sources:
     - osarch
     - os_family

@@ -13,16 +13,16 @@
 {%- import_yaml _defaults_filename as default_settings %}
 
 {# List of sources to lookup for parameters #}
-{%- do salt.log.debug('map.jinja: lookup map.jinja configuration sources') %}
+{%- do salt.log.debug("map.jinja: lookup 'map_jinja' configuration sources") %}
 {# Fallback to previously used grains plus minion `id` #}
 {%- set map_sources = ['osarch', 'os_family', 'os', 'osfinger', 'id'] %}
 {# Configure map.jinja from defaults.yaml #}
-{%- set map_sources = default_settings | traverse('map.jinja:sources', map_sources) %}
+{%- set map_sources = default_settings | traverse('map_jinja:sources', map_sources) %}
 
 {# Lookup global sources #}
-{%- set map_sources = salt['config.get']('map.jinja:sources', map_sources) %}
+{%- set map_sources = salt['config.get']('map_jinja:sources', map_sources) %}
 {# Lookup per formula sources #}
-{%- set map_sources = salt['config.get'](tplroot ~ ':map.jinja:sources', map_sources) %}
+{%- set map_sources = salt['config.get'](tplroot ~ ':map_jinja:sources', map_sources) %}
 
 {%- do salt.log.debug('map.jinja: load parameters with sources from ' ~ map_sources) %}
 
