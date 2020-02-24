@@ -36,17 +36,17 @@ Each formula comes with one or more YAML files, all located under the ``<formula
 
 Then, ``map.jinja`` will load configuration using `salt['config.get'] <https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.config.html#salt.modules.config.get>`_ from a configurable list, by default, this list is the following:
 
-- ``osarch``: the CPU architecture of the minion
-- ``os_family``: the family of the operating system (e.g. ``Debian`` for an ``Ubuntu``)
-- ``os``: the name of the operating system (e.g. ``Ubuntu``)
-- ``osfinger``: the concatenation of the operating system name and it's version string (e.g. ``Debian-10``)
-- ``id``: the ``ID`` of the minion
+#. ``osarch``: the CPU architecture of the minion
+#. ``os_family``: the family of the operating system (e.g. ``Debian`` for an ``Ubuntu``)
+#. ``os``: the name of the operating system (e.g. ``Ubuntu``)
+#. ``osfinger``: the concatenation of the operating system name and it's version string (e.g. ``Debian-10``)
+#. ``id``: the ``ID`` of the minion
 
 After the configuration values are initialised with ``defaults.yaml``, for each configuration of the list, in the order, ``map.jinja`` will:
 
-- lookup the value of the configuration
-- load the values of ``parameters/<config>/<config value>.yaml``
-- merge the loaded values with the previous ones using `salt.slsutil.merge <https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.slsutil.html>`_
+#. lookup the value of the configuration
+#. load the values of ``parameters/<config>/<config value>.yaml``
+#. merge the loaded values with the previous ones using `salt.slsutil.merge <https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.slsutil.html>`_
 
 Each YAML parameter file:
 
@@ -58,11 +58,11 @@ Each YAML parameter file:
 
 If the ``config.get`` lookup failed, the configuration name will be used literally as a custom path to a YAML file, for example: ``any/path/can/be/used/here.yaml`` will result in the loading of ``parameters/any/path/can/be/used/here.yaml``.
 
-You can override the list of configuration to lookup by setting ``map_jinja:sources`` from 3 places:
+You can override the list of configuration to lookup by setting ``map_jinja:sources`` from 3 places, in the lookup order:
 
-- ``defaults.yaml`` for the author of the formula
-- pillar root (or anywhere reachable by ``salt['config.get']``
-- under ``<formula>:map_jinja:sources``
+#. ``defaults.yaml`` for the author of the formula
+#. pillar root (or anywhere reachable by ``salt['config.get']``
+#. under ``<formula>:map_jinja:sources``
 
 Configuration from ``salt['config.get']``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
