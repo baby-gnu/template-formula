@@ -8,16 +8,6 @@
 # If you do not need to provide defaults via the `osarch` config,
 # you can remove this file or provide at least an empty dict, e.g.
 # values: {}
-#
-# This file will be merged with `salt.slsutil.merge`:
-#
-# You can select the merging strategy by defining the `strategy` dict
-# with one of: `aggregate`, `list`, `overwrite`, `recurse`, `smart`, e.g.
-# strategy: 'recurse'
-#
-# If you use the `recurse` or `overwrite` strategy, you can aggregate
-# the lists by defining the `merge_lists` dict with a boolean, e.g.
-# merge_lists: 'true'
 ---
 values:
   arch: 386

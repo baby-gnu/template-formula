@@ -33,7 +33,11 @@ which contains the currently released version. This formula is versioned accordi
 
 See `Formula Versioning Section <https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html#versioning>`_ for more details.
 
-If you need (non-default) configuration, please pay attention to the ``pillar.example`` file and/or `Special notes`_ section.
+If you need (non-default) configuration, please pay attention:
+
+- to the ``pillar.example`` file
+- to `how to configure formula with map.jinja <map.jinja.rst>`_
+- and/or `Special notes`_ section
 
 Contributing to this repo
 -------------------------
