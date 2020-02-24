@@ -25,6 +25,7 @@ As a good practice, you should:
 
 - store non secret data in YAML files distributed by the `fileserver <https://docs.saltstack.com/en/latest/ref/configuration/master.html#std:conf_master-fileserver_backend>`_
 - store sensible data
+
   - in pillar (and look for the use of something like `pillar.vault <https://docs.saltstack.com/en/latest/ref/pillar/all/salt.pillar.vault.html>`_)
   - in `SDB <https://docs.saltstack.com/en/latest/topics/sdb/index.html>`_ (and look for the use of something like `sbd.vault <https://docs.saltstack.com/en/latest/ref/sdb/all/salt.sdb.vault.html>`_)
 
@@ -52,6 +53,7 @@ Each YAML parameter file:
 
 - is optional, there will be no error if the file does not exists
 - when it exists
+
   - the configuration values must be under the top level ``values`` key
   - the merging strategy of ``salt.slsutil.merge`` can be configured by the top level ``strategy`` key, for example ``strategy: 'recurse'``, the default is ``smart``
   - the merging of list for the ``recurse`` and ``overwrite`` merging strategy can be configured with the top level key ``merge_lists``, for example ``merge_lists: 'true'``
