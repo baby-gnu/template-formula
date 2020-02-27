@@ -3,7 +3,7 @@
 ``map.jinja``: gather formula configuration values
 ==================================================
 
-The `documentation <https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html#writing-formulas>`_ gives a quick view of the use of a ``map.jinja`` to gather parameters values for a formula. 
+The `documentation`_ gives a quick view of the use of a ``map.jinja`` to gather parameters values for a formula.
 
 The today best practice is to let ``map.jinja`` handle parameters from all sources and avoid the call of pillars, grains or configuration from ``sls`` files and template directly.
 
@@ -16,18 +16,18 @@ How to set configuration values of a formula
 
 The ``map.jinja`` use several sources where to lookup parameter values:
 
-- YAML files located in the `fileserver <https://docs.saltstack.com/en/latest/ref/configuration/master.html#std:conf_master-fileserver_backend>`_
-- configuration collected by `salt['config.get'] <https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.config.html#salt.modules.config.get>`_
+- YAML files located in the `fileserver`_
+- configuration collected by `salt['config.get']`_
 
-The `pillars <https://docs.saltstack.com/en/latest/topics/pillar/>`_ are rendered by the SaltStack master and could became costly with lots of minions with many pillar values.
+The `pillars`_ are rendered by the SaltStack master and could became costly with lots of minions with many pillar values.
 
 As a good practice, you should:
 
-- store non secret data in YAML files distributed by the `fileserver <https://docs.saltstack.com/en/latest/ref/configuration/master.html#std:conf_master-fileserver_backend>`_
+- store non secret data in YAML files distributed by the `fileserver`_
 - store sensible data
 
-  - in pillar (and look for the use of something like `pillar.vault <https://docs.saltstack.com/en/latest/ref/pillar/all/salt.pillar.vault.html>`_)
-  - in `SDB <https://docs.saltstack.com/en/latest/topics/sdb/index.html>`_ (and look for the use of something like `sbd.vault <https://docs.saltstack.com/en/latest/ref/sdb/all/salt.sdb.vault.html>`_)
+  - in `pillars`_ (and look for the use of something like `pillar.vault`_)
+  - in `SDB`_ (and look for the use of something like `sbd.vault`_)
 
 
 Configuration from YAML files
@@ -35,7 +35,7 @@ Configuration from YAML files
 
 Each formula comes with one or more YAML files, all located under the ``<formula-name>/parameters`` directory. The parameter values are initialised with the mandatory ``defaults.yaml``. It should contain sane default values for the formula.
 
-Then, ``map.jinja`` will load configuration using `salt['config.get'] <https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.config.html#salt.modules.config.get>`_ from a configurable list, by default, this list is the following:
+Then, ``map.jinja`` will load configuration using `salt['config.get']`_ from a configurable list, by default, this list is the following:
 
 #. ``osarch``: the CPU architecture of the minion
 #. ``os_family``: the family of the operating system (e.g. ``Debian`` for an ``Ubuntu``)
@@ -47,7 +47,7 @@ After the configuration values are initialised with ``defaults.yaml``, for each 
 
 #. lookup the value of the configuration
 #. load the values of ``parameters/<config>/<config value>.yaml``
-#. merge the loaded values with the previous ones using `salt.slsutil.merge <https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.slsutil.html>`_
+#. merge the loaded values with the previous ones using `salt.slsutil.merge`_
 
 Each YAML parameter file:
 
@@ -69,7 +69,7 @@ You can override the list of configuration to lookup by setting ``map_jinja:sour
 Configuration from ``salt['config.get']``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-After the configuration is loaded from YAML files, ``map.jinja`` lookup the ``<formula name>`` with `salt['config.get'] <https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.config.html#salt.modules.config.get>`_ and then merge with the previously loaded values:
+After the configuration is loaded from YAML files, ``map.jinja`` lookup the ``<formula name>`` with `salt['config.get']`_ and then merge with the previously loaded values:
 
 - first the ``<formula>:lookup`` dict
 - then the complete ``<formula>`` dict
@@ -122,16 +122,16 @@ Here is an example based on ``template-formula/TEMPLATE/config/file.sls``
 
     # -*- coding: utf-8 -*-
     # vim: ft=sls
-    
+
     {#- Get the `tplroot` from `tpldir` #}
     {%- set tplroot = tpldir.split('/')[0] %}
     {%- set sls_package_install = tplroot ~ '.package.install' %}
     {%- from tplroot ~ "/map.jinja" import TEMPLATE with context %}
     {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
-    
+
     include:
       - {{ sls_package_install }}
-    
+
     TEMPLATE-config-file-file-managed:
       file.managed:
         - name: {{ TEMPLATE.config }}
@@ -157,10 +157,20 @@ This ``sls`` file expose a ``TEMPLATE`` context variable to the jinja template w
     # File managed by Salt at <{{ source }}>.
     # Your changes will be overwritten.
     ########################################################################
-    
+
     This is another example file from SaltStack template-formula.
-    
+
     # This is here for testing purposes
     {{ TEMPLATE | json }}
 
     winner of the merge: {{ TEMPLATE['winner'] }}
+
+
+.. _documentation: https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html#writing-formulas
+.. _fileserver: https://docs.saltstack.com/en/latest/ref/configuration/master.html#std:conf_master-fileserver_backend
+.. _salt['config.get']: https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.config.html#salt.modules.config.get
+.. _pillar.vault: https://docs.saltstack.com/en/latest/ref/pillar/all/salt.pillar.vault.html
+.. _pillars: https://docs.saltstack.com/en/latest/topics/pillar/
+.. _SDB: https://docs.saltstack.com/en/latest/topics/sdb/index.html
+.. _sbd.vault: https://docs.saltstack.com/en/latest/ref/sdb/all/salt.sdb.vault.html
+.. _salt.slsutil.merge: https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.slsutil.html
