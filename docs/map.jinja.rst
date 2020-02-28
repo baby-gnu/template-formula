@@ -16,10 +16,10 @@ How to set configuration values of a formula
 
 The ``map.jinja`` use several sources where to lookup parameter values:
 
-- YAML files located in the `fileserver`_
+- YAML files located in the `fileserver`_ under the formula ``parameters/`` directory
 - configuration collected by `salt['config.get']`_
 
-The `pillars`_ are rendered by the SaltStack master and could became costly with lots of minions with many pillar values.
+As `pillars`_ are rendered by the SaltStack master for each minion, they could became costly when you have lots of minions with many pillar values.
 
 As a good practice, you should:
 
@@ -33,9 +33,14 @@ As a good practice, you should:
 Configuration from YAML files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Each formula comes with one or more YAML files, all located under the ``<formula-name>/parameters`` directory. The parameter values are initialised with the mandatory ``defaults.yaml``. It should contain sane default values for the formula.
+The formula comes with one or more YAML files, located under the formula ``parameters/`` directory.
 
-Then, ``map.jinja`` will load configuration using `salt['config.get']`_ from a configurable list, by default, this list is the following:
+At import time, ``map.jinja`` will process in the order:
+
+#. the mandatory ``defaults.yaml`` file which should contain sane default values for a formula.
+#. a configurable list of YAML files with names based configuration looked up with `salt['config.get']`_
+
+The default configuration keys looked up are, in the order of processing:
 
 #. ``osarch``: the CPU architecture of the minion
 #. ``os_family``: the family of the operating system (e.g. ``Debian`` for an ``Ubuntu``)
@@ -43,20 +48,13 @@ Then, ``map.jinja`` will load configuration using `salt['config.get']`_ from a c
 #. ``osfinger``: the concatenation of the operating system name and it's version string (e.g. ``Debian-10``)
 #. ``id``: the ``ID`` of the minion
 
-After the configuration values are initialised with ``defaults.yaml``, for each configuration of the list, in the order, ``map.jinja`` will:
+For each configuration key, ``map.jinja`` will:
 
 #. lookup the value of the configuration
-#. load the values of ``parameters/<config>/<config value>.yaml``
+#. load the values from ``parameters/<config>/<config value>.yaml``
 #. merge the loaded values with the previous ones using `salt.slsutil.merge`_
 
-Each YAML parameter file:
-
-- is optional, there will be no error if the file does not exists
-- when it exists
-
-  - the configuration values must be under the top level ``values`` key
-  - the merging strategy of ``salt.slsutil.merge`` can be configured by the top level ``strategy`` key, for example ``strategy: 'recurse'``, the default is ``smart``
-  - the merging of list for the ``recurse`` and ``overwrite`` merging strategy can be configured with the top level key ``merge_lists``, for example ``merge_lists: 'true'``
+There will be no error if a YAML file does not exists, they are all optional (except ``defaults.yaml``).
 
 If the ``config.get`` lookup failed, the configuration name will be used literally as a custom path to a YAML file, for example: ``any/path/can/be/used/here.yaml`` will result in the loading of ``parameters/any/path/can/be/used/here.yaml``.
 
@@ -66,18 +64,39 @@ You can override the list of configuration to lookup by setting ``map_jinja:sour
 #. pillar root (or anywhere reachable by ``salt['config.get']``
 #. under ``<formula>:map_jinja:sources``
 
+When you write a new YAML file, not that it must conform to the following layout:
+
+- a mandatory ``values`` key to store the configuration values
+- an optional ``strategy`` key to configure the merging strategy of ``salt.slsutil.merge``, for example ``strategy: 'recurse'``, the default is ``smart``
+- an optional ``merge_lists`` key to configure the merging of list for the ``recurse`` and ``overwrite``, for example ``merge_lists: 'true'``
+
+Here is a valid example:
+
+.. code-block:: yaml
+
+    ---
+    strategy: 'recurse'
+    merge_lists: 'false'
+    values:
+      pkg:
+        name: 'some-package'
+      config: '/path/to/a/configuration/file'
+    ...
+
+
 Configuration from ``salt['config.get']``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-After the configuration is loaded from YAML files, ``map.jinja`` lookup the ``<formula name>`` with `salt['config.get']`_ and then merge with the previously loaded values:
+After the configuration is loaded from YAML files, ``map.jinja`` lookup the configuration named after the formula name with `salt['config.get']`_ . Then, it merges with the previously loaded values, in the order:
 
-- first the ``<formula>:lookup`` dict
-- then the complete ``<formula>`` dict
+#. the ``<formula>:lookup`` dict
+#. then the complete ``<formula>`` dict
+
 
 Global view of the order of preferences
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To make things clear, here is a complete example of the load order of formula configuration values for an ``AMD64`` ``Ubuntu 18.04`` minion named ``minion1.example.net``:
+To make resumé, here is a complete example of the load order of formula configuration values for an ``AMD64`` ``Ubuntu 18.04`` minion named ``minion1.example.net`` for the ``mysql`` formula:
 
 #. ``parameters/defaults.yaml``
 #. ``parameters/osarch/amd64.yaml``
@@ -85,8 +104,10 @@ To make things clear, here is a complete example of the load order of formula co
 #. ``parameters/os/Ubunta.yaml``
 #. ``parameters/osfinger/Ubunta-18.04.yaml``
 #. ``parameters/id/minion1.example.net``
-#. ``salt['config.get']('<formula>:lookup')``
-#. ``salt['config.get']('<formula>')``
+#. ``salt['config.get']('mysql:lookup')``
+#. ``salt['config.get']('mysql')``
+
+Remember that the order is important, for example, the value of ``key1:subkey1`` loaded from ``parameters/os_family/Debian.yaml`` is overridden by a value loaded from ``parameters/id/minion1.example.net``.
 
 
 Use formula configuration values in `sls`
