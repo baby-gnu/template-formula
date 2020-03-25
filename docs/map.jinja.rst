@@ -64,13 +64,13 @@ At import time, ``map.jinja`` will configure itself the sources from where to im
 
 #. builtin default
 
-  #. ``osarch``: grain of the CPU architecture of the minion
-  #. ``os_family``: grain of the family of the operating system (e.g. ``Debian`` for an ``Ubuntu``)
-  #. ``os``: grain of the name of the operating system (e.g. ``Ubuntu``)
-  #. ``osfinger``: grain the concatenation of the operating system name and it's version string (e.g. ``Debian-10``)
-  #. ``config_get_lookup`` formula `lookup` table retrived by `salt['config.get']`_
-  #. ``config_get``: formula global configuration retrived by `salt['config.get']`_
-  #. ``id``: grain of the ``ID`` of the minion
+   #. ``osarch``: grain of the CPU architecture of the minion
+   #. ``os_family``: grain of the family of the operating system (e.g. ``Debian`` for an ``Ubuntu``)
+   #. ``os``: grain of the name of the operating system (e.g. ``Ubuntu``)
+   #. ``osfinger``: grain the concatenation of the operating system name and it's version string (e.g. ``Debian-10``)
+   #. ``config_get_lookup`` formula `lookup` table retrived by `salt['config.get']`_
+   #. ``config_get``: formula global configuration retrived by `salt['config.get']`_
+   #. ``id``: grain of the ``ID`` of the minion
 
 #. `defaults.yaml`: optionally define a formula specific `map_jinja:sources` for the author of the formula
 #. global configuration lookup `map_jinja:sources`
