@@ -38,14 +38,14 @@ jobs:
         # Install and run `salt-lint`
         - pip install --user salt-lint
         - git ls-files -- '*.sls' '*.jinja' '*.j2' '*.tmpl' '*.tst'
-                        | xargs salt-lint
+                        | xargs salt-lint -c ci/salt-lint
         # Install and run `yamllint`
         # Need at least `v1.17.0` for the `yaml-files` setting
         - pip install --user yamllint>=1.17.0
-        - yamllint -s .
+        - yamllint --config-file ci/yamllint -s .
         # Install and run `rubocop`
         - gem install rubocop
-        - rubocop -d
+        - rubocop -d --config ci/rubocop.yml
         # Run `shellcheck` (already pre-installed in Travis)
         - shellcheck --version
         - git ls-files -- '*.sh' '*.bash' '*.ksh'
@@ -53,7 +53,7 @@ jobs:
         # Install and run `commitlint`
         - npm i -D @commitlint/config-conventional
                    @commitlint/travis-cli
-        - commitlint-travis
+        - commitlint-travis --verbose --config ci/commitlint.config.js
 
     # Run `pre-commit` linters in a single job
     - language: 'python'
@@ -66,8 +66,11 @@ jobs:
       script:
         # Install and run `pre-commit`
         - pip install pre-commit==2.7.1
-        - pre-commit run --all-files --color always --verbose
-        - pre-commit run --color always --hook-stage manual --verbose commitlint-travis
+        - pre-commit run --config ci/pre-commit-config.yaml
+                         --all-files --color always --verbose
+        - pre-commit run --config ci/pre-commit-config.yaml
+                         --color always --verbose
+                         --hook-stage manual commitlint-travis
 
     ## Define the rest of the matrix based on Kitchen testing
     # Make sure the instances listed below match up with
